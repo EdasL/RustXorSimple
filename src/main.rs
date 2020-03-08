@@ -2,14 +2,15 @@ use std::char;
 use std::io::{self, BufRead};
 
 fn encryption(key: &String, values_to_be_encrypted: String) -> String {
-    const RADIX: u32 = 32;
-    let key_as_digit = key.parse::<u32>().unwrap();
+    let key_vec: Vec<char> = key.chars().collect();
+    let values_to_be_encrypted_vec = values_to_be_encrypted.chars();
     let mut encrypted_input = Vec::new();
 
-    for value in values_to_be_encrypted.chars() {
-        let value_as_digit = value.to_digit(RADIX).unwrap();
-        let encrypted_value = value_as_digit ^ key_as_digit;
-        let encrypted_value_as_char = char::from_digit(encrypted_value, RADIX).unwrap();
+    for (index, value) in values_to_be_encrypted_vec.enumerate() {
+        let value_as_digit = value as u8;
+        let key_value_to_encrypt = key_vec[index % key_vec.len()] as u8;
+        let encrypted_value = value_as_digit ^ key_value_to_encrypt;
+        let encrypted_value_as_char = encrypted_value as char;
 
         encrypted_input.push(encrypted_value_as_char);
     }
@@ -22,7 +23,6 @@ fn main() {
     let mut iterator = stdin.lock().lines();
 
     println!("Enter xor cipher key and line to be encrypted:");
-    // implemented that xor_key(xor_key < 100) and input values can only be numbers
     let xor_key = iterator.next().unwrap().unwrap();
     let input_values = iterator.next().unwrap().unwrap();
 
